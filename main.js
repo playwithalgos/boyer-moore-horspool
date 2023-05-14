@@ -112,7 +112,15 @@ function moveHorizontallyOnDrag(el) {
             el.style.left = document.getElementById("word").children[pos].getBoundingClientRect().left - document.getElementById("word").getBoundingClientRect().left + "px";
             update();
         }
+        document.ontouchmove = (evt) => {
+            el.style.left = (parseInt(el.style.left ? el.style.left : 0) + evt.pageX - x) + "px";
+            x = evt.pageX;
+        }
+        document.ontouchend = document.onmouseup;
+
     }
+
+    el.ontouchstart = el.onmousedown;
 }
 
 moveHorizontallyOnDrag(document.getElementById("pattern"));
