@@ -66,6 +66,15 @@ function nextCorrectPos() {
     return isWin() ? pos : pos + (lastOcc[text[pos + pattern.length - 1]] != undefined ? (pattern.length - 1 - lastOcc[text[pos + pattern.length - 1]]) : pattern.length);
 }
 
+
+function getMousePos(evt) {
+    if (evt.pageX)
+        return { x: evt.pageX, y: evt.pageY };
+    else if (evt.touches)
+        return { x: evt.touches[0].pageX, y: evt.touches[0].pageY };
+    else
+        return { x: 0, y: 0 };
+}
 /**
  * 
  * @param {*} el
@@ -74,17 +83,20 @@ function nextCorrectPos() {
 function moveHorizontallyOnDrag(el) {
     let x = 0;
     el.onmousedown = (evt) => {
+
         reset();
         document.getElementById("word").children[cursor].classList.add("cursor");
-        x = evt.pageX;
+        x = getMousePos(evt).x;
+        console.log(x)
         document.onmousemove = (evt) => {
+            const newX = getMousePos(evt).x;
+            console.log(newX)
             if (evt.buttons) {
-                el.style.left = (parseInt(el.style.left ? el.style.left : 0) + evt.pageX - x) + "px";
+                el.style.left = (parseInt(el.style.left ? el.style.left : 0) + newX - x) + "px";
                 x = evt.pageX;
             }
         }
         document.onmouseup = (evt) => {
-
             let bestX = 100000;
             let newpos = undefined
             for (let i = 0; i < text.length; i++) {
@@ -113,11 +125,11 @@ function moveHorizontallyOnDrag(el) {
             update();
         }
         document.ontouchmove = (evt) => {
-            el.style.left = (parseInt(el.style.left ? el.style.left : 0) + evt.pageX - x) + "px";
-            x = evt.pageX;
+            console.log(getMousePos(evt).x);
+            el.style.left = (parseInt(el.style.left ? el.style.left : 0) + getMousePos(evt).x - x) + "px";
+            x = getMousePos(evt).x;
         }
         document.ontouchend = document.onmouseup;
-
     }
 
     el.ontouchstart = el.onmousedown;
