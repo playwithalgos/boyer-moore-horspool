@@ -1,60 +1,93 @@
 
 
-function randomWord(n) { return Array.from({ length: n }, () => Math.floor(Math.random() * 4)); }
+/**
+ * 
+ * @param {*} n 
+ * @returns a random Word (represented as an array) where letters are 
+ */
+function randomWord(n) { return Array.from({ length: n }, () => String.fromCharCode(65 + Math.floor(Math.random() * 4))); }
 
-const alphabets = [0, 1, 2, 3];
-const word = randomWord(40);
+const colors = { "A": "#EE4444", "B": "#448822", "C": "#4477DD", "D": "#EEAA00" };
 const pattern = randomWord(5);
-const colors = ["#EE4444", "#448822", "#4477DD", "#EEAA00"];
+const text = addPatternAroundTheEnd(randomWord(40), pattern);
+
+/**
+ * 
+ * @param {*} text 
+ * @param {*} pattern 
+ * @returns place the pattern in the text
+ */
+function addPatternAroundTheEnd(text, pattern) {
+    const b = text.length - pattern.length - 1 - Math.floor(Math.random() * 4);
+    for (let i = 0; i < pattern.length; i++)
+        text[b + i] = pattern[i];
+    return text;
+}
 
 let pos = 0;
 let cursor = pattern.length - 1;
 
+/**
+ * compute the last occurrence table
+ */
 const lastOcc = {};
-
 for (let i = 0; i < pattern.length - 1; i++) {
     lastOcc[pattern[i]] = i;
 }
 
+/**
+ * 
+ * @param {*} el 
+ * @param {*} word 
+ * @description fill the DOM element el with the word
+ */
 function fill(el, word) {
     for (const char of word) {
         const charElement = document.createElement("div");
         charElement.classList.add("char");
-        charElement.innerText = String.fromCharCode(65 + char);
+        charElement.innerText = char;
         charElement.style.background = colors[char];
         el.appendChild(charElement);
     }
 }
 
-fill(document.getElementById("word"), word);
+fill(document.getElementById("word"), text);
 fill(document.getElementById("pattern"), pattern);
 
-const CHARWIDTH = (document.getElementById("word").children[word.length - 1].getBoundingClientRect().left - document.getElementById("word").children[0].getBoundingClientRect().left) / word.length;
+const CHARWIDTH = (document.getElementById("word").children[text.length - 1].getBoundingClientRect().left - document.getElementById("word").children[0].getBoundingClientRect().left) / text.length;
+
+function isArrayEquals(a, b) { return a.length === b.length && a.every((val, index) => val === b[index]); }
+
+//win if the pattern matches the portion in the text
+function isWin() { return isArrayEquals(pattern, text.slice(pos, pos + pattern.length)); }
+
+
 function nextCorrectPos() {
-    return pos + (lastOcc[word[pos + pattern.length - 1]] != undefined ? (pattern.length - 1 - lastOcc[word[pos + pattern.length - 1]]) : pattern.length);
+    return isWin() ? pos : pos + (lastOcc[text[pos + pattern.length - 1]] != undefined ? (pattern.length - 1 - lastOcc[text[pos + pattern.length - 1]]) : pattern.length);
 }
 
-
+/**
+ * 
+ * @param {*} el
+ * @description makes that the element (the pattern) el moves horizontal 
+ */
 function moveHorizontallyOnDrag(el) {
     let x = 0;
     el.onmousedown = (evt) => {
         reset();
         document.getElementById("word").children[cursor].classList.add("cursor");
-
         x = evt.pageX;
-
         document.onmousemove = (evt) => {
             if (evt.buttons) {
                 el.style.left = (parseInt(el.style.left ? el.style.left : 0) + evt.pageX - x) + "px";
                 x = evt.pageX;
             }
         }
-
         document.onmouseup = (evt) => {
 
             let bestX = 100000;
             let newpos = undefined
-            for (let i = 0; i < word.length; i++) {
+            for (let i = 0; i < text.length; i++) {
                 const d = Math.abs(document.getElementById("word").children[i].getBoundingClientRect().left - document.getElementById("pattern").getBoundingClientRect().left);
                 if (d < bestX) {
                     bestX = d;
@@ -64,8 +97,10 @@ function moveHorizontallyOnDrag(el) {
 
             if (newpos == nextCorrectPos()) {
                 pos = newpos;
-                document.getElementById("pattern").classList.add("bravo");
-                setTimeout(() => document.getElementById("pattern").classList.remove("bravo"), 500);
+                if (isWin()) {
+                    document.getElementById("pattern").classList.add("bravo");
+                    document.body.classList.add("bravo");
+                }
             }
             else {
                 console.log("correction position :", nextCorrectPos());
@@ -78,8 +113,6 @@ function moveHorizontallyOnDrag(el) {
             update();
         }
     }
-
-
 }
 
 moveHorizontallyOnDrag(document.getElementById("pattern"));
@@ -91,10 +124,7 @@ function reset() {
         e.classList.remove("dismatch");
         e.classList.remove("cursor");
     });
-
 }
-
-
 
 
 function update() {
@@ -104,7 +134,7 @@ function update() {
     cursor = pos + k;
     if (!document.getElementById("horspool").checked) {
         for (k = pattern.length - 1; k >= 0; k--) {
-            if (pattern[k] == word[pos + k]) {
+            if (pattern[k] == text[pos + k]) {
                 document.getElementById("pattern").children[k].classList.add("match");
                 document.getElementById("word").children[pos + k].classList.add("match");
             }
@@ -120,8 +150,6 @@ function update() {
 
     for (let letter in lastOcc)
         document.getElementById("pattern").children[lastOcc[letter]].classList.add("lastOccurrence");
-
-
 }
 
 update();
