@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body,
+    html {
+        background-color: black;
+        height: 100%;
+        color: white;
+    }
+
+    .char {
+        display: inline-block;
+        background-color: red;
+        padding: 8px;
+        width: 20px;
+        height: 20px;
+        margin: 0px;
+        user-select: none;
+        text-align: center;
+        font-weight: bold;
+        border:2px solid black;
+    }
+
+    .word {
+        position: relative;
+        display: block;
+        height: 42px;
+        white-space: nowrap;
+    }
+
+    .pattern {
+        top: 0px;
+        left: 0px;
+    }
+
+    @keyframes match {
+        from {
+            rotate: -5deg;
+        }
+
+        to {
+            rotate: 5deg;
+        }
+    }
+
+    .match {
+        animation: 500ms linear 0s infinite alternate match;
+        filter: brightness(1.1);
+    }
+
+    .dismatch {
+        filter: brightness(0.6);
+        border:2px solid gray;
+    }
+
+    .cursor {
+        border-top: 2px solid white;
+    }
+    #playground {
+        padding: 16px;
+        
+    }
+
+    .lastOccurrence {
+        border-radius: 16px;
+    }
+
+
+    #options {
+        position:fixed;
+        bottom: 0px;
+        padding: 8px;
+    }
+</style>
+
+<head>
+
+</head>
+
+<body>
+    <h1>Boyer-Moore algorithm!</h1>
+
+    The objective is to find the pattern in the word. You may start with Horspool simplified version of the algorithm.
+    Drag and drop the pattern along the word. At each step, you have a current letter <div class="char cursor">A</div>. 
+    You must align the pattern so that the current letter matches the corresponding last occurrence <div class="char lastOccurrence">A</div>.
+    The non-simplified version computes the last occurrences to-the-left of the already matched right-part!
+
+
+
+    <div id="playground">
+        <div class="word" id="word"></div>
+        <div class="word pattern" id="pattern"></div>
+    </div>
+    
+
+    <div id="options">
+        <input id="horspool" type="checkbox" checked></input><label for="horspool">Simplified version of Horspool</label>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
