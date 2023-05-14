@@ -83,19 +83,25 @@ function getMousePos(evt) {
 function moveHorizontallyOnDrag(el) {
     let x = 0;
     el.onmousedown = (evt) => {
-
+        evt.preventDefault(); 
         reset();
         document.getElementById("word").children[cursor].classList.add("cursor");
         x = getMousePos(evt).x;
         console.log(x)
-        document.onmousemove = (evt) => {
-            const newX = getMousePos(evt).x;
-            console.log(newX)
-            if (evt.buttons) {
-                el.style.left = (parseInt(el.style.left ? el.style.left : 0) + newX - x) + "px";
-                x = evt.pageX;
-            }
+
+        document.ontouchmove = (evt) => {
+            console.log(getMousePos(evt).x);
+            el.style.left = (parseInt(el.style.left ? el.style.left : 0) + getMousePos(evt).x - x) + "px";
+            x = getMousePos(evt).x;
+            evt.preventDefault();
+            document.body.style.overflow = "hidden";
         }
+
+        document.onmousemove = (evt) => {
+            if (evt.buttons)
+                document.ontouchmove(evt);
+        }
+
         document.onmouseup = (evt) => {
             let bestX = 100000;
             let newpos = undefined
@@ -123,12 +129,13 @@ function moveHorizontallyOnDrag(el) {
 
             el.style.left = document.getElementById("word").children[pos].getBoundingClientRect().left - document.getElementById("word").getBoundingClientRect().left + "px";
             update();
+
+            document.onmousemove = undefined;
+            document.onmouseup = undefined;
+            document.ontouchmove = undefined;
+            document.ontouchend = undefined;
         }
-        document.ontouchmove = (evt) => {
-            console.log(getMousePos(evt).x);
-            el.style.left = (parseInt(el.style.left ? el.style.left : 0) + getMousePos(evt).x - x) + "px";
-            x = getMousePos(evt).x;
-        }
+
         document.ontouchend = document.onmouseup;
     }
 
