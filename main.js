@@ -1,4 +1,7 @@
-
+function getParam(label) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(label);
+}
 
 /**
  * 
@@ -7,9 +10,12 @@
  */
 function randomWord(n) { return Array.from({ length: n }, () => String.fromCharCode(65 + Math.floor(Math.random() * 4))); }
 
-const colors = { "A": "#EE4444", "B": "#448822", "C": "#4477DD", "D": "#EEAA00" };
-const pattern = randomWord(5);
-const text = addPatternAroundTheEnd(randomWord(40), pattern);
+
+const pattern = getParam("pattern") ? Array.from(getParam("pattern")) : randomWord(5);
+const text = getParam("text") ? Array.from(getParam("text")) : addPatternAroundTheEnd(randomWord(40), pattern);
+function getColor(char) {
+    return `hsl(${((char.charCodeAt(0) - 65) % 13) * 360 / 13} 80% 30%)`;
+}
 
 /**
  * 
@@ -46,7 +52,7 @@ function fill(el, word) {
         const charElement = document.createElement("div");
         charElement.classList.add("char");
         charElement.innerText = char;
-        charElement.style.background = colors[char];
+        charElement.style.background = getColor(char);
         el.appendChild(charElement);
     }
 }
@@ -83,7 +89,7 @@ function getMousePos(evt) {
 function moveHorizontallyOnDrag(el) {
     let x = 0;
     el.onmousedown = (evt) => {
-        evt.preventDefault(); 
+        evt.preventDefault();
         reset();
         document.getElementById("word").children[cursor].classList.add("cursor");
         x = getMousePos(evt).x;
