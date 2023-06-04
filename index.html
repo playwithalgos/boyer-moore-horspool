@@ -13,6 +13,11 @@
         color: white;
     }
 
+    body {
+        overflow-x: scroll;
+        width: fit-content;
+    }
+
     .char {
         display: inline-block;
         background-color: red;
@@ -24,7 +29,7 @@
         text-align: center;
         font-weight: bold;
         border: 2px solid black;
-        vertical-align:top;
+        vertical-align: top;
     }
 
     .word {
@@ -107,6 +112,17 @@
     .bravo {
         background: green;
     }
+
+    #help {
+        width: 100%;
+    }
+
+
+    .hidden {
+        opacity: 0;
+    }
+
+
 </style>
 
 <head>
@@ -114,14 +130,16 @@
 </head>
 
 <body>
-    <h1>Boyer-Moore-Horspool algorithm</h1>
+    <div id="help">
+        <h1>Boyer-Moore-Horspool algorithm</h1>
 
-    The objective is to find the pattern in the word.
-    Drag and drop the pattern along the word. At each step, you have a current letter <div class="char cursor">A</div>.
-    You must align the pattern so that the current letter matches the corresponding last occurrence <div
-        class="char lastOccurrence">A</div>. If the current letter does not appear in the pattern, you must move
-    forward.
-
+        The objective is to find the pattern in the word.
+        Drag and drop the pattern along the word. At each step, you have a current letter <div class="char cursor">A
+        </div>.
+        You must align the pattern so that the current letter matches the corresponding last occurrence <div
+            class="char lastOccurrence">A</div>. If the current letter does not appear in the pattern, you must move
+        forward.
+    </div>
 
     <div id="playground">
         <div class="word" id="word"></div>

@@ -14,7 +14,7 @@ function randomWord(n) { return Array.from({ length: n }, () => String.fromCharC
 const pattern = getParam("pattern") ? Array.from(getParam("pattern")) : randomWord(5);
 const text = getParam("text") ? Array.from(getParam("text")) : addPatternAroundTheEnd(randomWord(40), pattern);
 function getColor(char) {
-    return `hsl(${((char.charCodeAt(0) - 65) % 13) * 360 / 13} 80% 30%)`;
+    return `hsl(${((char.charCodeAt(0) - 65) % 13) * 360 / 13} 100% 35%)`;
 }
 
 /**
@@ -136,6 +136,7 @@ function moveHorizontallyOnDrag(el) {
             el.style.left = document.getElementById("word").children[pos].getBoundingClientRect().left - document.getElementById("word").getBoundingClientRect().left + "px";
             update();
 
+            document.body.style.overflow = null;
             document.onmousemove = undefined;
             document.onmouseup = undefined;
             document.ontouchmove = undefined;
@@ -146,6 +147,8 @@ function moveHorizontallyOnDrag(el) {
     }
 
     el.ontouchstart = el.onmousedown;
+
+   
 }
 
 moveHorizontallyOnDrag(document.getElementById("pattern"));
@@ -188,3 +191,4 @@ function update() {
 update();
 
 document.getElementById("horspool").onchange = update;
+document.getElementById("help").onclick = () => {document.getElementById("help").classList.toggle("hidden")}
